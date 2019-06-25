@@ -8,10 +8,6 @@ exports.up = function(knex) {
       users.string('password', 255).notNullable();
       users.string('name').notNullable();
       users.string('email').notNullable();
-      users.string('product');
-      users.float('price');
-      users.string('location');
-      users.string('description');
   });
 };
 
