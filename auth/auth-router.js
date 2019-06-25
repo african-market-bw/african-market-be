@@ -15,6 +15,7 @@ router.post('/register', (req, res) => {
       res.status(201).json(saved);
     })
     .catch(error => {
+      console.log(error);
       res.status(500).json(error);
     });
 });
@@ -43,9 +44,9 @@ router.post('/login', (req, res) => {
 
 function generateToken(user) {
   const payload = {
-    subject: user.id, // standard claim = sub
+    subject: user.id, 
     username: user.username,
-    roles: ['seller'],
+    
   };
 
   const options = {

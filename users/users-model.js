@@ -3,7 +3,7 @@ const db = require('../data/dbConfig.js');
 module.exports = {
   addPass,
   findPass,
-  // findBy,
+  findBy,
   findById,
   find,
   add,
@@ -16,9 +16,9 @@ function findPass() {
   return db('users').select('id', 'username', 'password');
 }
 
-// function findBy(filter) {
-//   return db('users').where(filter);
-// }
+function findBy(filter) {
+  return db('users').where(filter);
+}
 
 function addPass(user) {
   return db('users')
