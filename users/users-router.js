@@ -1,12 +1,11 @@
 const express = require('express');
 
 const Users = require('./users-model');
-const restricted = require('../auth/restricted.js');
-// const Messages = require('../messages/messages-model.js');
-const checkRole = require('../auth/checkRole.js');
+const {authenticate} = require('../auth/authenticate.js');
+// const Messages = require('../messages/messages-model.js')
 const router = express.Router();
 
-router.get('/', restricted, checkRole('seller'), (req, res) => {
+router.get('/', authenticate, (req, res) => {
   Users.find()
     .then(users => {
       res.json(users);
@@ -14,28 +13,28 @@ router.get('/', restricted, checkRole('seller'), (req, res) => {
     .catch(err => res.send(err));
 });
 
-router.get('/', restricted, (req, res) => {
-  Users.findPass()
-    .then(users => {
-      res.json(users);
-    })
+// router.get('/', authenticate, (req, res) => {
+//   Users.findPass()
+//     .then(users => {
+//       res.json(users);
+//     })
     
-    .catch(err => res.send(err));
-    console.log(error);
-});
+//     .catch(err => res.send(err));
+//     console.log(error);
+// });
 
 // // this only runs if the url has /api/users in it
-router.get('/', async (req, res) => {
-  try {
-    const users = await Users.find(req.query);
-    res.status(200).json(users);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: 'Error retrieving the Users',
-    });
-  }
-});
+// router.get('/', async (req, res) => {
+//   try {
+//     const users = await Users.find(req.query);
+//     res.status(200).json(users);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({
+//       message: 'Error retrieving the Users',
+//     });
+//   }
+// });
 
 
 router.get('/:id', async (req, res) => {

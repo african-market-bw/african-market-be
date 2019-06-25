@@ -2,7 +2,6 @@ const db = require('../data/dbConfig.js');
 
 module.exports = {
   addPass,
-  findPass,
   findBy,
   findById,
   find,
@@ -12,9 +11,6 @@ module.exports = {
   findUsersDescription
 };
 
-function findPass() {
-  return db('users').select('id', 'username', 'password');
-}
 
 function findBy(filter) {
   return db('users').where(filter);
