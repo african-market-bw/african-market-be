@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const authRouter = require('../auth/auth-router.js');
 const usersRouter = require('../users/users-router.js');
+const productsRouter = require('../users/products-router.js');
 
 const server = express();
 
@@ -13,9 +14,10 @@ server.use(cors());
 
 server.use('/api/auth', authRouter);
 server.use('/api/users', usersRouter);
+server.use('/api/products', productsRouter);
 
 server.get('/', (req, res) => {
-  res.send("Hello Team!");
+  res.status(200).json({ message: " Hello Team "});
 });
 
 module.exports = server;
