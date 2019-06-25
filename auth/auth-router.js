@@ -1,15 +1,14 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const Users = require('../users/users-model.js');
+const secrets = require('../config/secrets.js');
 
 router.post('/register', (req, res) => {
   let user = req.body;
-
-  // hash the password
-  const hash = bcrypt.hashSync(user.password, 8); // password gets re-hashed 2 ^ 8 times
-
-  user.password = hash; 
+  const hash = bcrypt.hashSync(user.password, 10); 
+  user.password = hash;
 
   Users.add(user)
     .then(saved => {
@@ -27,7 +26,12 @@ router.post('/login', (req, res) => {
     .first()
     .then(user => {
       if (user && bcrypt.compareSync(password, user.password)) {
-        res.status(200).json({ message: `Welcome ${user.username}!` });
+        const token = generateToken(user); 
+
+        res.status(200).json({
+          message: `Welcome ${user.username} to Afican Marketplace!`,
+          token, 
+        });
       } else {
         res.status(401).json({ message: 'Invalid Credentials' });
       }
@@ -36,5 +40,19 @@ router.post('/login', (req, res) => {
       res.status(500).json(error);
     });
 });
+
+function generateToken(user) {
+  const payload = {
+    subject: user.id, // standard claim = sub
+    username: user.username,
+    roles: ['seller'],
+  };
+
+  const options = {
+    expiresIn: '1d',
+  };
+
+  return jwt.sign(payload, secrets.jwtSecret, options);
+}
 
 module.exports = router;
