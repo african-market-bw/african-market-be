@@ -27,7 +27,7 @@ router.get("/:id", (req, res) => {
         db("products")
           .where({ id })
           .then(users => {
-            products.users = users;
+            users.product = users;
             return res.status(200).json(products);
           });
       })
