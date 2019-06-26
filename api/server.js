@@ -8,6 +8,8 @@ const productsRouter = require('../users/products-router.js');
 
 const server = express();
 
+
+
 server.use(helmet());
 server.use(express.json());
 server.use(cors());
