@@ -1,9 +1,11 @@
 const db = require('../data/dbConfig');
 
 
+
 module.exports = {
   find,
   findById,
+  userById,
   add,
   remove,
   update,
@@ -18,6 +20,11 @@ function findById(id) {
   return db('products')
     .where({ id })
     .first();
+}
+
+function userById(user_id) {
+  return db('products')
+    .where({ user_id });
 }
 
 async function add(produt) {

@@ -3,6 +3,7 @@ const router = require('express').Router();
 const Products = require('./products-model');
 const Users = require('./users-model');
 const db = require('../data/dbConfig');
+const {authenticate} = require('../auth/authenticate.js');
 
 // this only runs if the url has /api/products in it
 
@@ -39,6 +40,28 @@ router.get('/:id', async (req, res) => {
     });
   }
 });
+
+router.get('/user/:id', authenticate ,async (req, res) => {
+  
+  try {
+    const user_id = req.decoded.subject
+    const product = await Products.userById(user_id);
+    if (product) {
+      res.status(200).json(product);
+    } else {
+      res.status(404).json({ message: 'This Product not found' });
+    }
+  } catch (error) {
+    // log error to server
+    console.log(error);
+    res.status(500).json({
+      message: 'Error retrieving the Produts',
+    });
+  }
+});
+
+
+
 
 function validateBody(req, res, next) {
   if (req.body && req.body.name) {

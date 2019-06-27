@@ -14,7 +14,11 @@ router.post('/register', (req, res) => {
 
   Users.add(user)
     .then(saved => {
-      res.status(201).json(saved);
+      const token = generateToken(saved)
+      res.status(201).json ({message:`Welcome you have sign in  ${user.username} to Afican Marketplace!`,
+          token,});
+
+
     })
     .catch(error => {
       console.log(error);
