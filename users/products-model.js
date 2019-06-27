@@ -27,11 +27,16 @@ function userById(user_id) {
     .where({ user_id });
 }
 
-async function add(produt) {
-  const [id] = await db('products').insert(product);
-
-  return findById(id);
+function add(product) {
+  return db('products')
+    .insert(product, 'id')
+    .then(ids => {
+      return db('products')
+       .where({ id: ids[0 ]})
+       .first();
+    })
 }
+  
 
 function remove(id) {
   return db('products')
