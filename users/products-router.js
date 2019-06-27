@@ -4,81 +4,98 @@ const Products = require('./products-model');
 const Users = require('./users-model');
 const db = require('../data/dbConfig');
 
+// this only runs if the url has /api/products in it
 
-router.get('/', (req, res ) => {
-    Products.find()
-        .then(products => {
-            res.status(200).json(products);
-        })
-        .catch(err => {
-            res
-                .status(500)
-                .json( {message: 'Not able to fetch your Products  Now'});
-        });
-});
- 
-router.get("/:id", (req, res) => {
-  const { id } = req.params;
-  db("products")
-    .where({ id: id })
-    .first()
-    .then(products => {
-      db("products")
-        .where({ id })
-        .then(users => {
-          users.users = users;
-          return res.status(200).json(products);
-        });
-    })
-    .catch(err => {
-      res.status(500).json({ Error: "There was an error getting that" });
+
+router.get('/', async (req, res) => {
+  try {
+    const products = await Products.find(req.query);
+    res.status(200).json(products);
+  } catch (error) {
+    // log error to server
+    console.log(error);
+    res.status(500).json({
+      message: 'Error retrieving the Products',
     });
+  }
 });
 
-router.patch('/:id', (req,res,next) => {
-  res.status(200).json({
-    message:"updated product"
-  });
-});
+// /api/products/:id
 
-router.delete('/:id', (req, res) => {
-  const product = req.param.product;
-  res.status(200).json({
-    message: 'Delete product',
-  }) 
-});
+router.get('/:id', async (req, res) => {
+  try {
+    const product = await Products.findById(req.params.id);
 
-router.post('/', async (req, res) => {
-  console.log(';:::::::::::inside the server::::::::');
-    const product = req.body;
-    if (product.name) {
-      try {
-        const inserted = await Products.add(product);
-        res.status(201).json(inserted);
-      } catch (error) {
-        console.log(error);
-        res
-          .status(500)
-          .json({ message: 'We ran into an error adding Product' });
-      }
+    if (product) {
+      res.status(200).json(product);
     } else {
-      res.status(400).json({ message: 'Please provide name of Product' });
+      res.status(404).json({ message: 'Product not found' });
     }
-  });
+  } catch (error) {
+    // log error to server
+    console.log(error);
+    res.status(500).json({
+      message: 'Error retrieving the Produts',
+    });
+  }
+});
 
-
-router.put('/:id', (req, res) => {
-  const product = Products.find(p => p.id == req.params.id);
-
-  if (!product) {
-    res.status(404).json({ message: 'Product does not exist' });
+function validateBody(req, res, next) {
+  if (req.body && req.body.name) {
+    next();
   } else {
-    
-    Products.add(product);
+    res.status(400).json({ message: 'Please provide the name of the Prouct' });
+  }
+}
 
-    res.status(200).json({message: 'Product was updated'});
+router.post('/', validateBody, async (req, res) => {
+  try {
+    // validate body to make sure there is a name
+    const product = await Products.add(req.body);
+    res.status(201).json(product);
+  } catch (error) {
+    // log error to server
+    console.log(error);
+    res.status(500).json({
+      message: 'Error adding the Product',
+    });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const count = await Products.remove(req.params.id);
+    if (count > 0) {
+      res.status(200).json({ message: 'The product has been delete' });
+    } else {
+      res.status(404).json({ message: 'The product could not be found' });
+    }
+  } catch (error) {
+    // log error to server
+    console.log(error);
+    res.status(500).json({
+      message: 'Error removing the product',
+    });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const product = await Products.update(req.params.id, req.body);
+    if (product) {
+      res.status(200).json(product);
+    } else {
+      res.status(404).json({ message: 'The product could not be found' });
+    }
+  } catch (error) {
+    // log error to server
+    console.log(error);
+    res.status(500).json({
+      message: 'Error updating the product',
+    });
   }
 });
 
 
 module.exports = router;
+
