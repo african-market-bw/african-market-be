@@ -4,45 +4,50 @@ const db = require('../data/dbConfig');
 const { add } = require('./products-model');
 
 describe('product model', () => {
-    it ('should set eniroment to testing', () => {
-        expect(process.env.DB_ENV).toBe('testing');
+    beforeAll(async () => {
+        await db('products').truncate();
     });
+
+    // it ('should set eniroment to testing', () => {
+    //     expect(process.env.DB_ENV).toBe('testing');
+    // });
 
     describe('add()', () => {
         it('should add the provided product', async  () => {
-         await add({ name: 'rice'});
-
+         await add({ name: 'rice' });
+        
          const products = await db('products');
-
 
          expect(products).toHaveLength(1);
 
         });
+
+        it('should insert the provided product', async () => {
+            const product = { name: 'beads'};
+            let added = await add(product);
+            expect(added.name).toBe(product.name);
+
+            products = { name: " oils"}
+            added = await add(product);
+            expect(added.name).toBe(product.name);
+        });
     });
+
+    describe('findById()', () => {
+        it('find a product by id', async () => {
+            await db('products').insert([
+                { name : 'peas'},
+                { name : 'beads'}
+            ]);
+            const product = await Products.findById
+            (2);
+
+            expect(product.name).toBe('beads');
+        });
+
+        
+    }) ;
+
+
 });
 
-describe('POST/products', () => {
-    it('should get 201 status code if complete', () => {
-        const game = { price: '25.00', location: 'USA '};
-        return request(products)
-            .post('/products')
-            .send(product)
-            .expect(201)
-    });
-
-    it('getting a 422 when genre is missing', () => {
-        const product = {location: 'londen'};
-        return request(productModel)
-        .post('/products')
-        .send(product)
-        .expect(422)
-    });
-
-    it('getting 422 status code if title is missing', () => {
-        const product = { description:'raw foods' };
-        return request(product)
-            .post('/products')
-            .send(product)
-            .expect(422)
-    });
-})

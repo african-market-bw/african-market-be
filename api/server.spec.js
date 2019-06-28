@@ -1,6 +1,9 @@
 const supertest = require('supertest');
-
+const request = require('supertest');
+const db = require('../data/dbConfig')
 const server = require('./server.js');
+const authRouter = require('../auth/auth-router.js');
+
 
 
 describe('server.js', () => {
@@ -34,10 +37,9 @@ describe('server.js', () => {
                 expect(res.status).toBe(200);
             });
 
-            // it('should return Hello Team ', async () => {
-            //     const res = await supertest(server).get('/');
-            //     expect(res.body).toBe("message: Hello Team");
-            // });
+            
+            
+            
     
             });
 
